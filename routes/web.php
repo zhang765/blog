@@ -13,17 +13,26 @@
 
 
 //后台路由组
-Route::get('/',function(){
-    return 123;
-});
+
 Route::group(['prefix'=>'admin'],function (){
+    Route::get('login',function (){
+        return view('admin\login');
+    });
+    Route::post('check_login','Admin\LoginController@authenticate')->middleware('login');
 	//首页
-    Route::get('/','Admin\IndexController@index');
-    Route::get('welcome','Admin\IndexController@welcome');
+    Route::group(['middleware'=>'auth'],function (){
 
-    //用户管理页面
-    Route::resource('user','Admin\UserController');
+        Route::get('/','Admin\IndexController@index');
+        Route::get('welcome','Admin\IndexController@welcome');
 
-    //角色管理
-    Route::resource('role','Admin\RoleController');
+        //用户管理页面
+        Route::resource('user','Admin\UserController');
+
+        //角色管理
+        Route::resource('role','Admin\RoleController');
+
+        Route::get('logout','Admin\LoginController@logout');
+    });
+
 });
+
